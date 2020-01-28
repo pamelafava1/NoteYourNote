@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "210161383437",
+    "firebase_url": "https://note-your-note-568ac.firebaseio.com",
+    "project_id": "note-your-note-568ac",
+    "storage_bucket": "note-your-note-568ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:210161383437:android:103b48e9a6bd68686dbd44",
+        "android_client_info": {
+          "package_name": "it.uniupo.noteyournote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "210161383437-ac0cjvbk495lkt14klhnjer3bmeeinkm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.uniupo.noteyournote",
+            "certificate_hash": "494db236892e91c491de972f07788ab817896fd4"
+          }
+        },
+        {
+          "client_id": "210161383437-mns17phnr9ns65ugph3f94pqk0a7p2ib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvsf-z3oIpE2M4uZanc45xRZDMFLAVgKc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "210161383437-mns17phnr9ns65ugph3f94pqk0a7p2ib.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

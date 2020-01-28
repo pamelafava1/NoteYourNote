@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">Note Your Note</string>
     <string name="account_already_exists">Account già esistente</string>
-    <string name="account_not_found">Nessun account corrisponde a tali informazioni</string>
+    <string name="account_not_found">Non è stato trovato nessun account corrispondente a tali informazioni</string>
     <string name="action_delete">Elimina</string>
     <string name="action_done">Fatto</string>
     <string name="action_logout">Esci</string>
     <string name="action_map">Mappa</string>
     <string name="action_more">Altro</string>
     <string name="camera">Camera</string>
-    <string name="cancelled">Annulata</string>
+    <string name="cancelled">Annullata</string>
     <string name="email_error_message">Inserisci una email valida.</string>
     <string name="error_message">Si è verificato un errore. Per favore riprova</string>
     <string name="exit_note_message">Sei sicuro di uscire? Tutte le modifiche non salvate andranno perse.</string>
@@ -47,7 +47,7 @@
     <string name="stop">Stop</string>
     <string name="stop_record_audio">Ferma la registrazione dell\'audio</string>
     <string name="title_activity_maps">Mappa</string>
-    <string name="title_empty_error_message">È richiesto un titolo</string>
+    <string name="title_empty_error_message">È richiesto un titolo.</string>
     <string name="upload_from">Carica da</string>
     <string name="yes">Sì</string>
 </resources>

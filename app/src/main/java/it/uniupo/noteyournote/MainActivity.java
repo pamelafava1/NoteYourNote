@@ -158,8 +158,7 @@ public class MainActivity extends AppCompatActivity {
             if (Util.isNetworkAvailable(this)) {
                 mProgressBar.setVisibility(View.VISIBLE);
                 mDataset.clear();
-                FirebaseFirestore
-                        .getInstance()
+                mDatabase
                         .collection(mAuth.getCurrentUser().getUid())
                         .get()
                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

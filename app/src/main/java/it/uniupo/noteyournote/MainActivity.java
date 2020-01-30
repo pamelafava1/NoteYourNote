@@ -47,9 +47,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (getIntent().hasExtra("signedUp") && getIntent().getExtras() != null) {
-            if (getIntent().getExtras().getBoolean("signedUp")) {
-                showDialog();
+        if (savedInstanceState == null) {
+            if (getIntent().hasExtra("signedUp") && getIntent().getExtras() != null) {
+                if (getIntent().getExtras().getBoolean("signedUp")) {
+                    showDialog();
+                }
             }
         }
 

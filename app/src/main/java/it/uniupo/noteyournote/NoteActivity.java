@@ -189,8 +189,10 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
                     handleResult();
                     break;
                 case REQUEST_GALLERY_IMAGE:
-                    mImageUri = data.getData();
-                    handleResult();
+                    if (data != null) {
+                        mImageUri = data.getData();
+                        handleResult();
+                    }
                     break;
             }
         } else if(resultCode == RESULT_CANCELED) {

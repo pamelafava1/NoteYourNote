@@ -7,6 +7,7 @@
     <string name="action_logout">Esci</string>
     <string name="action_map">Mappa</string>
     <string name="action_more">Altro</string>
+    <string name="action_save_message">Vuoi salvare le note locali sul cloud?</string>
     <string name="camera">Camera</string>
     <string name="cancelled">Annullata</string>
     <string name="email_error_message">Inserisci una email valida.</string>

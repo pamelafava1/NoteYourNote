@@ -119,7 +119,9 @@ public class SignupActivity extends AppCompatActivity {
                                 // La registrazione e' andata a buon fine quindi viene fatta partire l'Activity principale
                                 if (task.isSuccessful()) {
                                     Log.d(TAG, "Signup successful");
-                                    startActivity(new Intent(SignupActivity.this, MainActivity.class));
+                                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                                    intent.putExtra("signedUp", true);
+                                    startActivity(intent);
                                     finish();
                                     // La registrazione non e' andata a buon fine quindi viene mostrato un Toast contente un messaggio di errore
                                 } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {

@@ -85,8 +85,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onInfoWindowClick(Marker marker) {
         Intent intent = new Intent(this, NoteActivity.class);
         Note note = (Note) marker.getTag();
-        intent.putExtra("id", note.getId());
-        startActivity(intent);
+        if (note != null) {
+            intent.putExtra("id", note.getId());
+            startActivity(intent);
+        }
     }
 
     private void retrieveNotes() {
@@ -108,8 +110,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    for (QueryDocumentSnapshot q : task.getResult()) {
-                                        addItemsToMaps(q.toObject(Note.class));
+                                    if (task.getResult() != null) {
+                                        for (QueryDocumentSnapshot q : task.getResult()) {
+                                            addItemsToMaps(q.toObject(Note.class));
+                                        }
                                     }
                                 }
                             }

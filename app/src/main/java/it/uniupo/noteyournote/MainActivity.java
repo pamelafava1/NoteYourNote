@@ -1,9 +1,11 @@
 package it.uniupo.noteyournote;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseFirestore mDatabase;
     private List<Note> mDataset;
     private SwipeRefreshLayout mRefreshLayout;
     private ListView mListView;
@@ -44,9 +47,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (getIntent().hasExtra("signedUp") && getIntent().getExtras() != null) {
+            if (getIntent().getExtras().getBoolean("signedUp")) {
+                showDialog();
+            }
+        }
+
         mDataset = new ArrayList<>();
 
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseFirestore.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -95,24 +105,62 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setMessage(getString(R.string.action_save_message))
+                .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveLocalNoteToCloud();
+                    }
+                })
+                .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void saveLocalNoteToCloud() {
+        if (Util.isNetworkAvailable(this)) {
+            for (Note note : retrieveNoteFromLocalDatabase()) {
+                if (!mDataset.contains(note)) {
+                    mDatabase
+                            .collection(mAuth.getCurrentUser().getUid())
+                            .document(note.getId())
+                            .set(note);
+                }
+            }
+            retrieveNote();
+        }
+    }
+
+    private List<Note> retrieveNoteFromLocalDatabase() {
+            DatabaseManager databaseManager = new DatabaseManager(this);
+            List<Note> dataset = databaseManager.fetch();
+            databaseManager.close();
+            return dataset;
+    }
+
     // Permette di recuperare tutte le note
     private void retrieveNote() {
         // Se l'utente non e' loggato recupera le note dal database locale
         if (mAuth.getCurrentUser() == null) {
             mDataset.clear();
-            DatabaseManager databaseManager = new DatabaseManager(this);
-            mDataset.addAll(databaseManager.fetch());
+            mDataset.addAll(retrieveNoteFromLocalDatabase());
             mAdapter.notifyDataSetChanged();
-            databaseManager.close();
         } else {
             // Altrimenti dal Cloud Firestore
             if (Util.isNetworkAvailable(this)) {
                 mProgressBar.setVisibility(View.VISIBLE);
                 mDataset.clear();
-                String uid = mAuth.getCurrentUser().getUid();
                 FirebaseFirestore
                         .getInstance()
-                        .collection(uid)
+                        .collection(mAuth.getCurrentUser().getUid())
                         .get()
                         .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                             @Override

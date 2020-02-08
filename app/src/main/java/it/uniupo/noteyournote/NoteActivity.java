@@ -230,6 +230,7 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
             mEditLocation.setText(addresses.get(0).getLocality());
         } else {
             Toast.makeText(mLocationTracker, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
+            mEditLocation.setText("");
             mLongitude = 0;
             mLatitude = 0;
         }

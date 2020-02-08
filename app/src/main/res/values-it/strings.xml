@@ -21,7 +21,7 @@
     <string name="gps_error_message">Vuoi attivare il GPS?</string>
     <string name="gps_error_title">GPS non abilitato.</string>
     <string name="helper_text">Usa almeno sei caratteri.</string>
-    <string name="hint_description">Description</string>
+    <string name="hint_description">Descrizione</string>
     <string name="hint_email">Email</string>
     <string name="hint_location">Posizione</string>
     <string name="hint_password">Password</string>

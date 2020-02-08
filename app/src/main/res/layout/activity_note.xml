@@ -85,8 +85,14 @@
                     android:id="@+id/note_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/ic_my_location"
+                    android:drawablePadding="10dp"
                     android:hint="@string/hint_location"
-                    android:inputType="none"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:imeOptions="actionNext"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
                     tools:ignore="Autofill" />
 
             </android.support.design.widget.TextInputLayout>

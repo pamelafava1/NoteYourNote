@@ -17,7 +17,9 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="forgot_password_message">Forgot your password? It happens.\nWe\'ll send you a link to reset it.</string>
     <string name="gallery">Gallery</string>
+    <string name="get_device_location_message">Do you want to locate the note in your current position?</string>
     <string name="gps_error_message">Do you want to turn on GPS?</string>
+    <string name="location_not_found">Location not found. Please try again</string>
     <string name="gps_error_title">GPS is not enabled.</string>
     <string name="helper_text">Use at least six characters.</string>
     <string name="hint_description">Description</string>

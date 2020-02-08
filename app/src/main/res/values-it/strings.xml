@@ -17,6 +17,7 @@
     <string name="forgot_password">Ha dimenticato la password?</string>
     <string name="forgot_password_message">Hai dimenticato la password? Succede. Ti invieremo un link per ripristinarla.</string>
     <string name="gallery">Galleria</string>
+    <string name="get_device_location_message">Vuoi impostare la tua posizione attuale come posizione della nota?</string>
     <string name="gps_error_message">Vuoi attivare il GPS?</string>
     <string name="gps_error_title">GPS non abilitato.</string>
     <string name="helper_text">Usa almeno sei caratteri.</string>
@@ -25,6 +26,7 @@
     <string name="hint_location">Posizione</string>
     <string name="hint_password">Password</string>
     <string name="hint_title">Titolo</string>
+    <string name="location_not_found">Posizione non trovata. Per favore riprova</string>
     <string name="image_error_message">Immagine troppo grande. Per favore riprova</string>
     <string name="log_in">Accedi</string>
     <string name="log_in_error_message">Questa combinazione di email e password non è corretta. Per favore riprova.</string>

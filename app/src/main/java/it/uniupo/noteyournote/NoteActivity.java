@@ -1,6 +1,7 @@
 package it.uniupo.noteyournote;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.location.Geocoder;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
@@ -25,6 +27,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,6 +54,7 @@ import java.util.Locale;
 
 import it.uniupo.noteyournote.database.DatabaseManager;
 import it.uniupo.noteyournote.model.Note;
+import it.uniupo.noteyournote.util.LocationTracker;
 import it.uniupo.noteyournote.util.PhotoUtil;
 import it.uniupo.noteyournote.util.Util;
 
@@ -62,7 +66,8 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private String mFileName, mLocation;
     private double mLatitude, mLongitude;
     private TextInputLayout mTitleWrapper, mLocationWrapper;
-    private EditText mEditTitle, mEditLocation, mEditDescription;
+    private EditText mEditTitle, mEditDescription;
+    private EditText mEditLocation;
     private ImageButton mBtnAddImage;
     private Button mBtnRecord, mBtnPlay, mBtnSpeech;
     private MediaRecorder mRecorder;
@@ -70,12 +75,15 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private boolean mStartRecording = true;
     private boolean mStartPlaying = true;
     private TextToSpeech mTextToSpeech;
+    private LocationTracker mLocationTracker;
     private static final int REQUEST_CAPTURE_IMAGE = 1000;
     private static final int REQUEST_GALLERY_IMAGE = 1001;
     private static final int REQUEST_RECORD_AUDIO = 1002;
+    private static final int REQUEST_LOCATION = 1003;
     private static final int ONE_MB = 1000000;
     private static final String TAG = "NoteActivity";
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +131,8 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
             }
         });
 
+        mEditLocation.setOnTouchListener(touchListener);
+
         mBtnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,6 +146,93 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 textToSpeak();
             }
         });
+    }
+
+    private View.OnTouchListener touchListener = new View.OnTouchListener() {
+        @SuppressLint("ClickableViewAccessibility")
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int DRAWABLE_RIGHT = 2;
+
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                if(event.getRawX() >= (mEditLocation.getRight() - mEditLocation.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    showAlertDialog();
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
+
+
+    private void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder
+                .setMessage(getString(R.string.get_device_location_message))
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getDeviceLocation();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+
+    private void getDeviceLocation() {
+        if (!Util.checkPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) && !Util.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else {
+            mLocationTracker = new LocationTracker(this);
+            if (mLocationTracker.canGetLocaion()) {
+                mLatitude = mLocationTracker.getLatitude();
+                mLongitude = mLocationTracker.getLongitude();
+                if (String.valueOf(mLatitude).equals("0.0") && String.valueOf(mLongitude).equals("0.0")) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLatitude = mLocationTracker.getLatitude();
+                            mLongitude = mLocationTracker.getLongitude();
+                            // Nel caso la latitudine e longitudine siano pari a 0.0 viene mostrato un Toast con un messaggio di errore
+                            // In caso contrario si salva il libro sulla mappa
+                            if (String.valueOf(mLatitude).equals("0.0") && String.valueOf(mLongitude).equals("0.0")) {
+                                Toast.makeText(NoteActivity.this, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
+                            } else {
+                                getNameFromCoordinates();
+                            }
+                        }
+                    }, 1000);
+                } else {
+                    getNameFromCoordinates();
+                }
+            } else {
+                mLocationTracker.showSettingsAlertDialog();
+            }
+        }
+    }
+
+    private void getNameFromCoordinates() {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = geocoder.getFromLocation(mLatitude, mLongitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (addresses != null && addresses.size() > 0) {
+            mEditLocation.setText(addresses.get(0).getLocality());
+        } else {
+            Toast.makeText(mLocationTracker, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
+            mLongitude = 0;
+            mLatitude = 0;
+        }
     }
 
     // AlertDialog che permette all'utente di scegliere se scattare una foto oppure scegliere un'immagine dalla galleria del dispositivo
@@ -663,6 +760,11 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
                     onRecord(mStartRecording);
                 }
                 break;
+            case REQUEST_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    getDeviceLocation();
+                }
+                break;
         }
     }
 
@@ -678,6 +780,9 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     protected void onStop() {
         super.onStop();
+        if (mLocationTracker != null) {
+            mLocationTracker.stopListener();
+        }
         if (mRecorder != null) {
             mRecorder.release();
             mRecorder = null;

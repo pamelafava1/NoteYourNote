@@ -227,7 +227,7 @@ public class NoteActivity extends AppCompatActivity implements TextToSpeech.OnIn
             e.printStackTrace();
         }
         if (addresses != null && addresses.size() > 0) {
-            mEditLocation.setText(addresses.get(0).getLocality());
+            mEditLocation.setText(addresses.get(0).getAddressLine(0));
         } else {
             Toast.makeText(mLocationTracker, getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
             mEditLocation.setText("");
